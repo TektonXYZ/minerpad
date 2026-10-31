@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  /* Ironbow stops, mirrored from lib/ramp.ts so CSS-only surfaces
+     (legends, meters, gradients) read off the same scale. */
+  --ramp: #06070e 0%, #120a2a 12%, #3a1070 26%, #7a1478 40%, #b92060 55%,
+    #e85a1c 68%, #f9960a 82%, #ffd447 92%, #fff6e0 100%;
+}
+
+html {
+  background: #05060a;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: #05060a;
+  color: #e6e9ef;
+  font-feature-settings: "tnum" 1, "ss01" 1;
+  overflow-x: clip; /* never overflow-x:hidden — it kills position:sticky */
+}
+
+::selection {
+  background: #e85a1c;
+  color: #05060a;
+}
+
+/* The cold aisle: a faint blue floor wash plus the vertical rhythm of rack
+   uprights, so every page sits inside the same room. */
+.room {
+  background-image:
+    radial-gradient(120% 70% at 50% -10%, rgba(58, 16, 112, 0.22), transparent 60%),
+    linear-gradient(180deg, rgba(10, 12, 17, 0.9), rgba(5, 6, 10, 0) 40%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 88px);
+}
+
+/* Machined panel: a hairline seam, a lit top edge, a dark bevel underneath. */
+.panel {
+  background: linear-gradient(180deg, #14181f 0%, #10131a 38%, #0c0f15 100%);
+  border: 1px solid #262b36;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.panel-flush {
+  background: linear-gradient(180deg, #0d1016, #0a0c11);
+  border: 1px solid #191d26;
+}
+
+/* Punched intake slots. Used on card edges and the nav. */
+.vent {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.66) 0 2px,
+    rgba(255, 255, 255, 0.045) 2px 3px,
+    transparent 3px 7px
+  );
+}
+
+.vent-v {
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.66) 0 2px,
+    rgba(255, 255, 255, 0.045) 2px 3px,
+    transparent 3px 7px
+  );
+}
+
+/* A pan-head screw, 6px. Four of them make anything look bolted down. */
+.screwhead {
+  background: radial-gradient(circle at 35% 30%, #4b5364, #1b1f28 70%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Stencilled asset-tag lettering. */
+.stencil {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 10px;
+  line-height: 1;
+  color: #5d6574;
+}
+
+/* Dot-matrix status readout. Silkscreen is a pixel face, so it must not be
+   anti-aliased into mush at small sizes. */
+.led {
+  font-family: var(--font-led), ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}
+
+/* Thin lit rule that separates rack units. */
+.seamline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #262b36 12%, #262b36 88%, transparent);
+}
+
+/* Slow vertical sweep, like a thermal camera refreshing. Decorative and
+   quiet; it is the one place warm light appears without being data, and it
+   is 4% opaque. */
+.sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(232, 90, 28, 0.055), transparent);
+  height: 25%;
+  animation: scan 7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sweep::after {
+    display: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Reveal-on-scroll. Hidden only once scripting is confirmed, so a
+   no-JS render shows everything. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.js [data-reveal].shown {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Focus that survives a dark UI. */
+:focus-visible {
+  outline: 2px solid #f9960a;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Range input restyled as a machine slider with a knurled thumb. */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 22px;
+  width: 100%;
+  cursor: ew-resize;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 1px;
+  background: linear-gradient(180deg, #05060a, #10131a);
+  border: 1px solid #262b36;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 1px;
+  background: linear-gradient(180deg, #05060a, #10131a);
+  border: 1px solid #262b36;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 22px;
+  margin-top: -9px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, #5d6574 0 1px, #2b313d 1px 3px);
+  border: 1px solid #0a0c11;
+  box-shadow: 0 0 0 1px #39404f, 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 22px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, #5d6574 0 1px, #2b313d 1px 3px);
+  border: 1px solid #0a0c11;
+  box-shadow: 0 0 0 1px #39404f;
+}
+
+/* Tables: tabular figures, no surprises when a number ticks. */
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
